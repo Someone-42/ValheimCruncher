@@ -1,3 +1,10 @@
+from enum import IntEnum
+
+class Roll(IntEnum):
+    MIN = 0
+    AVERAGE = 1
+    MAX = 2
+
 class Game:
     # Represents an approximation of a current time frame's game's state.
     # Used in the calculations of various scenarios

@@ -75,12 +75,13 @@ def get_elemental_tick_debuff(damage_type, damage, player_is_attacked=False):
 def stack_elemental_tick_debuff(damage_type, dps_duration_tuple1, dd1_expired, dps_duration_tuple2):
     """ Returns a new DPS, Duration tuple obtained by stacking every elemental damages """
     if damage_type == DamageType.SPIRIT:    # Only spirit debuff stacks
-        # From my own testing, duration is reset, and leftover tick damage is added in the total damage    
+        # From my own testing, duration is reset, and leftover tick damage is added in the total damage, therefore dmg/tick has to be recalculated
+        # NOTE: Spirit tick is 1/2 a second
         dps1, d1 = dps_duration_tuple1
         dps2, d2 = dps_duration_tuple2
         dr = d1 / d2 # duration ratio -> There are 6 ticks, we get the remaining amount of ticks divided by total
-        # This ratio is then used to calculate how much is required to be added to tick dmg
-        return (dps1 * dr + dp2, d2)
+        # This ratio is then used to calculate how much is left to be applied per tick to reach dps1 * d1 damage
+        return (dps1 * dr + dps2, d2)
     dps1, d1 = dps_duration_tuple1
     dps2, d2 = dps_duration_tuple2
     return (max(dps1, dps2), max(d1, d2))

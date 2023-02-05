@@ -1,6 +1,6 @@
 from Modifiers import *
 from Entity import Entity
-
+from Game import Roll
 class Mob(Entity):
     __slots__ = (
         "level"     # the amount of stars + 1 decorating the enemy, level 1 is 0 star, and so on
@@ -19,7 +19,7 @@ class Mob(Entity):
     def get_damage_per_tick(self, damage, damage_type):
         pass
 
-    def get_percieved_damage(self, weapon_attack, player, attack_bonus = 1, targets = 1):
+    def get_percieved_damage(self, weapon_attack, player, attack_bonus = 1, targets = 1, roll_chance = Roll.AVERAGE):
         """ Returns damage taken by the enemy from a weapon attack by the player """
         # calculate stagger (When the enemy is staggered, we cannot add more stagger)
         staggered = self.stagger >= self.stagger_limit    # supposing the enemy doesn't take double damage on first stagger hit
@@ -27,7 +27,7 @@ class Mob(Entity):
 
         multitarget_penalty = 1 if targets == 1 else (4/(3 * targets))
 
-        mul = stagger_bonus * attack_bonus * multitarget_penalty * player.get_skill_factor(weapon_attack.skill) # Backstab is missing because calculated in the weapon_attack step
+        mul = stagger_bonus * attack_bonus * multitarget_penalty * player.get_skill_factor(weapon_attack.skill, roll_chance) # Backstab is missing because calculated in the weapon_attack step
 
         tick_damage = []
         dmg = 0
