@@ -1,6 +1,6 @@
-from Modifiers import *
-from Entity import Entity
-from Game import Roll
+from Objects.Modifiers import *
+from Objects.Entity import Entity
+from Objects.Game import Roll
 class Mob(Entity):
     __slots__ = (
         "level"     # the amount of stars + 1 decorating the enemy, level 1 is 0 star, and so on
@@ -27,7 +27,7 @@ class Mob(Entity):
 
         multitarget_penalty = 1 if targets == 1 else (4/(3 * targets))
 
-        mul = stagger_bonus * attack_bonus * multitarget_penalty * player.get_skill_factor(weapon_attack.skill, roll_chance) # Backstab is missing because calculated in the weapon_attack step
+        mul = stagger_bonus * attack_bonus * multitarget_penalty * player.get_damage_skill_factor(weapon_attack.skill, roll_chance) # Backstab is missing because calculated in the weapon_attack step
 
         tick_damage = []
         dmg = 0

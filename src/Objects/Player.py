@@ -1,6 +1,6 @@
-from Entity import Entity
-from Modifiers import *
-from Game import Roll
+from Objects.Entity import Entity
+from Objects.Modifiers import *
+from Objects.Game import Roll
 
 
 class Player(Entity):

@@ -1,4 +1,4 @@
-from Modifiers import *
+from Objects.Modifiers import *
 
 class Entity:
     """ An entity is a game object that can percieve damage posses resistance and or armors """
@@ -16,6 +16,7 @@ class Entity:
         self.dmg = dmg
         self.modifiers = modifiers
         self.stagger_limit = stagger_limit
+        self.stagger = self.stagger_limit * self.hp
 
     def get_damage(self):
         raise NotImplementedError()
