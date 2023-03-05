@@ -1,29 +1,29 @@
 import json
 import inspect
 
-def _get_constructor_args(elementType):
+def _GetConstructorArgs(elementType):
     # Gathering constructor parameter names
     return [param for param in dict(inspect.signature(elementType.__init__).parameters) if param != "self"]
 
-def _get_matching_variables_as_strings(instance, attributeNames):
+def _GetMatchingVariablesAsStrings(instance, attributeNames):
     res = []
     for attr in attributeNames:
         if attr in instance.__dict__:
-            res.append(_serialize_var_to_string(instance.__dict__[attr]))
+            res.append(_SerializeVarToString(instance.__dict__[attr]))
     return res
 
-def _serialize_var_to_string(v):
+def _SerializeVarToString(v):
     # Works for strings, ints, and floats, rest wasn't tested
     if isinstance(v, str):
         return f"\"{v}\""
     else:
         return str(v)
 
-def _deserialize_string_to_variables(s):
+def _DeserializeStringToVariables(s):
     return eval(s)
 
 def NewSaveFile(filename, elementType):
-    attributes = _get_constructor_args(elementType)
+    attributes = _GetConstructorArgs(elementType)
     f = open(filename, 'w')
     f.write(" ".join(attributes) + '\n')
     f.close()
@@ -35,7 +35,7 @@ def SerializeAndSave(filename, element):
         # Gathering attributes that are currently being saved in the file
         attributes = f.readline().strip().split(' ')
 
-        v = _get_matching_variables_as_strings(element, attributes)
+        v = _GetMatchingVariablesAsStrings(element, attributes)
 
         f.seek(0, 2) # Going to the end of file
         f.write(" ".join(v) + '\n')
@@ -44,9 +44,24 @@ def SerializeAndSave(filename, element):
     finally:
         f.close()
 
+def SerializeElements(filename, elements):
+    """ This function overrides the file """
+    elementType = type(elements)
+    attributes = _GetConstructorArgs(elementType)
+
+    lines = []
+    for element in elements:
+        v = _GetMatchingVariablesAsStrings(element, attributes)
+        lines.append(' '.join(v) + '\n')
+
+    f = open(filename, 'w')
+    f.write(" ".join(attributes) + '\n')
+    f.writelines(lines)
+    f.close()
+
 def DeSerializeFromSave(filename, elementType):
     """ Returns a collection of elements from save file (filename) """
-    args = _get_constructor_args(elementType)
+    args = _GetConstructorArgs(elementType)
 
     f = open(filename, 'r')
     attributes = f.readline().strip().split(' ')
@@ -67,7 +82,7 @@ def DeSerializeFromSave(filename, elementType):
     data = [None] * len(lines)
     for i, line in enumerate(lines):
         for j, s in enumerate(line.strip().split(' ')):
-            d[args[j]] = _deserialize_string_to_variables(s)
+            d[args[j]] = _DeserializeStringToVariables(s)
         data[i] = elementType(**d) # Unpacking variables (with attribute name) into constructor
     
     return data
